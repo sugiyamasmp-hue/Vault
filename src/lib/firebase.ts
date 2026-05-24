@@ -1,7 +1,7 @@
 import { VaultItem, VaultItemInput } from "@/types/vault";
 
 // ─── モード判定 ───────────────────────────────────────────────────────────────
-const USE_MOCK = !process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
+const USE_MOCK = false;
 
 // ─── Firebase シングルトン ─────────────────────────────────────────────────────
 // Firebase の初期化を一度だけ行い、db / storage を使い回す
