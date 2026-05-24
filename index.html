@@ -7,34 +7,20 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0f0f0f;
-    --surface: #1a1a1a;
-    --surface2: #222;
-    --border: #2a2a2a;
-    --accent: #c8a96e;
-    --accent2: #e8c98e;
-    --text: #e8e8e8;
-    --text2: #999;
-    --danger: #e05555;
-    --success: #5cb85c;
+    --bg: #0f0f0f; --surface: #1a1a1a; --surface2: #222; --border: #2a2a2a;
+    --accent: #c8a96e; --accent2: #e8c98e; --text: #e8e8e8; --text2: #999;
+    --danger: #e05555; --success: #5cb85c;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
-  header {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 12px 16px;
-    display: flex; align-items: center; justify-content: space-between;
-    position: sticky; top: 0; z-index: 100;
-  }
+  header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
   .logo { display: flex; align-items: center; gap: 10px; }
   .logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
   .logo-text h1 { font-family: 'Space Mono', monospace; font-size: 16px; color: var(--accent); letter-spacing: 2px; }
   .logo-text p { font-size: 10px; color: var(--text2); }
   .item-count { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--accent); background: rgba(200,169,110,0.1); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(200,169,110,0.2); }
 
-  /* PC レイアウト */
   .container { max-width: 1200px; margin: 0 auto; padding: 20px 16px; display: grid; grid-template-columns: 1fr 380px; gap: 20px; }
   @media (max-width: 768px) { .container { grid-template-columns: 1fr; } .form-panel { display: none; } }
 
@@ -48,12 +34,12 @@
 
   .card-list { display: flex; flex-direction: column; gap: 10px; }
   .vault-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden; }
-  .vault-card:hover { border-color: var(--accent); transform: translateY(-1px); }
-  .vault-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; border-radius: 3px 0 0 3px; background: var(--accent); }
+  .vault-card:hover { border-color: var(--accent); }
+  .vault-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--accent); }
   .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
   .card-title { font-size: 14px; font-weight: 700; color: var(--text); }
   .card-actions { display: flex; gap: 6px; }
-  .btn-icon { width: 28px; height: 28px; border-radius: 6px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 13px; transition: all 0.2s; }
+  .btn-icon { width: 28px; height: 28px; border-radius: 6px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 13px; }
   .btn-edit { background: rgba(200,169,110,0.1); color: var(--accent); }
   .btn-del { background: rgba(224,85,85,0.1); color: var(--danger); }
   .card-cat { font-size: 11px; color: var(--text2); margin-bottom: 4px; }
@@ -64,7 +50,6 @@
   .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
   .loading { text-align: center; padding: 30px; color: var(--text2); font-size: 13px; }
 
-  /* フォームパネル（PC） */
   .form-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px; position: sticky; top: 72px; max-height: calc(100vh - 92px); overflow-y: auto; }
   .form-title { font-family: 'Space Mono', monospace; font-size: 13px; color: var(--accent); letter-spacing: 1px; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
 
@@ -84,18 +69,17 @@
   .file-upload input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
   .file-upload .upload-icon { font-size: 24px; margin-bottom: 6px; }
   .file-upload p { font-size: 11px; color: var(--text2); }
+  .file-note { font-size: 10px; color: var(--text2); margin-top: 4px; }
   .file-preview { margin-top: 8px; padding: 7px 10px; background: var(--surface2); border-radius: 6px; font-size: 11px; color: var(--accent); display: flex; align-items: center; gap: 6px; }
   .file-preview button { margin-left: auto; background: none; border: none; color: var(--danger); cursor: pointer; font-size: 14px; }
+  .file-preview img { max-width: 100%; border-radius: 6px; margin-top: 6px; }
 
   .btn-submit { width: 100%; padding: 11px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border: none; border-radius: 8px; color: #1a1a1a; font-weight: 700; font-size: 14px; cursor: pointer; font-family: 'Noto Sans JP', sans-serif; transition: all 0.2s; margin-top: 4px; }
   .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
   .btn-cancel { width: 100%; padding: 9px; background: none; border: 1px solid var(--border); border-radius: 8px; color: var(--text2); font-size: 12px; cursor: pointer; font-family: 'Noto Sans JP', sans-serif; margin-top: 6px; }
 
-  /* モバイル FAB & モーダル */
   .fab { display: none; }
-  @media (max-width: 768px) {
-    .fab { display: flex; position: fixed; bottom: 24px; right: 20px; width: 56px; height: 56px; border-radius: 16px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border: none; color: #1a1a1a; font-size: 28px; font-weight: 700; cursor: pointer; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(200,169,110,0.4); z-index: 50; }
-  }
+  @media (max-width: 768px) { .fab { display: flex; position: fixed; bottom: 24px; right: 20px; width: 56px; height: 56px; border-radius: 16px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border: none; color: #1a1a1a; font-size: 28px; font-weight: 700; cursor: pointer; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(200,169,110,0.4); z-index: 50; } }
 
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; display: none; align-items: flex-end; justify-content: center; }
   .modal-overlay.show { display: flex; }
@@ -105,16 +89,16 @@
   .modal-title { font-size: 16px; font-weight: 700; color: var(--accent); font-family: 'Space Mono', monospace; }
   .modal-close { width: 30px; height: 30px; border-radius: 6px; border: 1px solid var(--border); background: none; color: var(--text2); cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; }
 
-  /* 詳細モーダル */
-  .detail-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px; }
+  .detail-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 300; display: none; align-items: center; justify-content: center; padding: 20px; }
   .detail-overlay.show { display: flex; }
   .detail-modal { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 24px; max-width: 520px; width: 100%; max-height: 80vh; overflow-y: auto; }
-  .detail-title { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+  .detail-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+  .detail-title { font-size: 18px; font-weight: 700; }
   .detail-cat { font-size: 12px; color: var(--text2); margin-bottom: 14px; }
   .detail-content { font-size: 14px; color: var(--text); white-space: pre-wrap; line-height: 1.8; background: var(--surface2); padding: 12px; border-radius: 8px; margin-bottom: 10px; }
   .detail-remarks { font-size: 13px; color: var(--text2); background: var(--surface2); padding: 10px; border-radius: 8px; margin-bottom: 10px; }
-  .detail-file a { color: var(--accent); font-size: 13px; text-decoration: none; }
   .detail-file img { max-width: 100%; border-radius: 8px; margin-top: 8px; }
+  .detail-file a { color: var(--accent); font-size: 13px; text-decoration: none; }
 
   .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 18px; font-size: 13px; z-index: 1000; opacity: 0; transition: opacity 0.3s; pointer-events: none; white-space: nowrap; }
   .toast.show { opacity: 1; }
@@ -131,21 +115,14 @@
 <header>
   <div class="logo">
     <div class="logo-icon">🔐</div>
-    <div class="logo-text">
-      <h1>VAULT</h1>
-      <p>重要情報マネージャー</p>
-    </div>
+    <div class="logo-text"><h1>VAULT</h1><p>重要情報マネージャー</p></div>
   </div>
   <span class="item-count" id="itemCount">0 件</span>
 </header>
 
 <div class="container">
-  <!-- 左：リスト -->
   <div>
-    <div class="search-bar">
-      <span>🔍</span>
-      <input type="text" id="searchInput" placeholder="名称・内容を検索...">
-    </div>
+    <div class="search-bar"><span>🔍</span><input type="text" id="searchInput" placeholder="名称・内容を検索..."></div>
     <div class="cat-tabs" id="catTabs">
       <button class="cat-tab active" data-cat="all">すべて</button>
       <button class="cat-tab" data-cat="銀行口座">🏦 銀行</button>
@@ -154,12 +131,9 @@
       <button class="cat-tab" data-cat="カード">💳 カード</button>
       <button class="cat-tab" data-cat="その他">📁 その他</button>
     </div>
-    <div class="card-list" id="cardList">
-      <div class="loading">読み込み中...</div>
-    </div>
+    <div class="card-list" id="cardList"><div class="loading">読み込み中...</div></div>
   </div>
 
-  <!-- 右：フォーム（PC） -->
   <div class="form-panel" id="pcForm">
     <div class="form-title" id="pcFormTitle">＋ 新規登録</div>
     <div class="cat-grid" id="pcCatGrid">
@@ -174,18 +148,21 @@
     <div class="form-group"><label class="form-label">備考</label><textarea class="form-textarea" id="pcRemarks" style="min-height:60px" placeholder="メモや補足情報"></textarea></div>
     <div class="form-group">
       <label class="form-label">ファイル添付（画像・PDF）</label>
-      <div class="file-upload"><input type="file" id="pcFile" accept="image/*,.pdf"><div class="upload-icon">📎</div><p>クリックしてファイルを選択</p><p style="font-size:10px;margin-top:3px">画像・PDF対応</p></div>
-      <div class="file-preview" id="pcFilePreview" style="display:none"><span id="pcFileName"></span><button onclick="clearFile('pc')">✕</button></div>
+      <div class="file-upload"><input type="file" id="pcFile" accept="image/*,.pdf"><div class="upload-icon">📎</div><p>クリックしてファイルを選択</p></div>
+      <p class="file-note">※ 画像は1MB以下推奨、PDFはリンク保存</p>
+      <div class="file-preview" id="pcFilePreview" style="display:none">
+        <span id="pcFileName"></span>
+        <button onclick="clearFile('pc')">✕</button>
+      </div>
+      <div id="pcImagePreview"></div>
     </div>
     <button class="btn-submit" id="pcSubmit" onclick="handleSubmit('pc')">登録する</button>
     <button class="btn-cancel" id="pcCancel" style="display:none" onclick="resetForm()">キャンセル</button>
   </div>
 </div>
 
-<!-- モバイル FAB -->
 <button class="fab" onclick="openMobileForm()">＋</button>
 
-<!-- モバイル フォームモーダル -->
 <div class="modal-overlay" id="mobileFormOverlay" onclick="closeMobileForm(event)">
   <div class="modal">
     <div class="modal-handle"></div>
@@ -205,18 +182,22 @@
     <div class="form-group"><label class="form-label">備考</label><textarea class="form-textarea" id="mobileRemarks" style="min-height:60px" placeholder="メモや補足情報"></textarea></div>
     <div class="form-group">
       <label class="form-label">ファイル添付（画像・PDF）</label>
-      <div class="file-upload"><input type="file" id="mobileFile" accept="image/*,.pdf"><div class="upload-icon">📎</div><p>タップしてファイルを選択</p><p style="font-size:10px;margin-top:3px">画像・PDF対応</p></div>
-      <div class="file-preview" id="mobileFilePreview" style="display:none"><span id="mobileFileName"></span><button onclick="clearFile('mobile')">✕</button></div>
+      <div class="file-upload"><input type="file" id="mobileFile" accept="image/*,.pdf"><div class="upload-icon">📎</div><p>タップしてファイルを選択</p></div>
+      <p class="file-note">※ 画像は1MB以下推奨、PDFはリンク保存</p>
+      <div class="file-preview" id="mobileFilePreview" style="display:none">
+        <span id="mobileFileName"></span>
+        <button onclick="clearFile('mobile')">✕</button>
+      </div>
+      <div id="mobileImagePreview"></div>
     </div>
     <button class="btn-submit" id="mobileSubmit" onclick="handleSubmit('mobile')">登録する</button>
     <button class="btn-cancel" id="mobileCancel" style="display:none" onclick="resetForm()">キャンセル</button>
   </div>
 </div>
 
-<!-- 詳細モーダル -->
 <div class="detail-overlay" id="detailOverlay" onclick="closeDetail(event)">
   <div class="detail-modal">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+    <div class="detail-header">
       <div class="detail-title" id="detailTitle"></div>
       <button class="modal-close" onclick="closeDetailDirect()">✕</button>
     </div>
@@ -232,7 +213,6 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBplaq4hCnjbSm6erkJFSJDRkxC2r8ESGU",
@@ -245,26 +225,31 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const storage = getStorage(app);
 
 let items = [];
 let selectedCat = { pc: '銀行口座', mobile: '銀行口座' };
 let filterCat = 'all';
 let searchQ = '';
 let editId = null;
-let selectedFile = { pc: null, mobile: null };
+let selectedFileData = { pc: null, mobile: null }; // {name, type, base64, isImage}
 
-// カテゴリ正規化（クレジットカード→カード）
-function normCat(c) {
-  return c === 'クレジットカード' ? 'カード' : c;
+function normCat(c) { return c === 'クレジットカード' ? 'カード' : c; }
+
+// ファイルをBase64に変換
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 }
 
 // カテゴリボタン
 ['pc', 'mobile'].forEach(prefix => {
-  const grid = document.getElementById(prefix + 'CatGrid') || document.getElementById(prefix === 'pc' ? 'pcCatGrid' : 'mobileCatGrid');
-  grid.querySelectorAll('.cat-btn').forEach(btn => {
+  document.getElementById(prefix + 'CatGrid').querySelectorAll('.cat-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      grid.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(prefix + 'CatGrid').querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       selectedCat[prefix] = btn.dataset.cat;
     });
@@ -281,28 +266,41 @@ document.querySelectorAll('.cat-tab').forEach(tab => {
   });
 });
 
-// 検索
-document.getElementById('searchInput').addEventListener('input', e => {
-  searchQ = e.target.value.toLowerCase();
-  renderList();
-});
+document.getElementById('searchInput').addEventListener('input', e => { searchQ = e.target.value.toLowerCase(); renderList(); });
 
 // ファイル選択
 ['pc', 'mobile'].forEach(prefix => {
-  document.getElementById(prefix + 'File').addEventListener('change', e => {
+  document.getElementById(prefix + 'File').addEventListener('change', async e => {
     const file = e.target.files[0];
-    if (file) {
-      selectedFile[prefix] = file;
-      document.getElementById(prefix + 'FileName').textContent = file.name;
-      document.getElementById(prefix + 'FilePreview').style.display = 'flex';
+    if (!file) return;
+
+    // サイズチェック（画像は1MB以下）
+    const isImage = file.type.startsWith('image/');
+    if (isImage && file.size > 1.5 * 1024 * 1024) {
+      showToast('画像は1.5MB以下にしてください', 'error');
+      e.target.value = '';
+      return;
+    }
+
+    const base64 = await fileToBase64(file);
+    selectedFileData[prefix] = { name: file.name, type: file.type, base64, isImage };
+    document.getElementById(prefix + 'FileName').textContent = file.name;
+    document.getElementById(prefix + 'FilePreview').style.display = 'flex';
+
+    // 画像プレビュー
+    if (isImage) {
+      document.getElementById(prefix + 'ImagePreview').innerHTML = `<img src="${base64}" style="max-width:100%;border-radius:6px;margin-top:8px">`;
+    } else {
+      document.getElementById(prefix + 'ImagePreview').innerHTML = `<p style="font-size:11px;color:var(--text2);margin-top:6px">📄 PDFは登録後にダウンロードできます</p>`;
     }
   });
 });
 
 window.clearFile = (prefix) => {
-  selectedFile[prefix] = null;
+  selectedFileData[prefix] = null;
   document.getElementById(prefix + 'File').value = '';
   document.getElementById(prefix + 'FilePreview').style.display = 'none';
+  document.getElementById(prefix + 'ImagePreview').innerHTML = '';
 };
 
 // データ取得
@@ -339,7 +337,7 @@ function renderList() {
         <div class="card-title">${esc(item.title)}</div>
         <div class="card-actions" onclick="event.stopPropagation()">
           <button class="btn-icon btn-edit" onclick="startEdit('${item.id}')">✏️</button>
-          <button class="btn-icon btn-del" onclick="deleteItem('${item.id}', '${item.fileUrl || ''}')">🗑️</button>
+          <button class="btn-icon btn-del" onclick="deleteItem('${item.id}')">🗑️</button>
         </div>
       </div>
       <div class="card-cat">${esc(normCat(item.category))}</div>
@@ -349,16 +347,14 @@ function renderList() {
   `).join('');
 }
 
-function updateCount() {
-  document.getElementById('itemCount').textContent = items.length + ' 件';
-}
+function updateCount() { document.getElementById('itemCount').textContent = items.length + ' 件'; }
 
 window.handleSubmit = async (prefix) => {
   const title = document.getElementById(prefix + 'Title').value.trim();
   const content = document.getElementById(prefix + 'Content').value.trim();
   const remarks = document.getElementById(prefix + 'Remarks').value.trim();
   const cat = selectedCat[prefix];
-  const file = selectedFile[prefix];
+  const fileData = selectedFileData[prefix];
 
   if (!title) { showToast('名称を入力してください', 'error'); return; }
   if (!content) { showToast('内容を入力してください', 'error'); return; }
@@ -368,29 +364,28 @@ window.handleSubmit = async (prefix) => {
   btn.textContent = '保存中...';
 
   try {
-    let fileUrl = '';
-    let fileName = '';
-    if (file) {
-      const storageRef = ref(storage, `vault_files/${Date.now()}_${file.name}`);
-      await uploadBytes(storageRef, file);
-      fileUrl = await getDownloadURL(storageRef);
-      fileName = file.name;
-    }
+    const saveData = {
+      category: cat, title, content, remarks,
+      fileName: fileData?.name || '',
+      fileType: fileData?.type || '',
+      fileBase64: fileData?.base64 || '',
+      isImage: fileData?.isImage || false,
+    };
 
     if (editId) {
       const existing = items.find(i => i.id === editId);
-      await updateDoc(doc(db, 'vaultItems', editId), {
-        category: cat, title, content, remarks,
-        fileUrl: fileUrl || existing?.fileUrl || '',
-        fileName: fileName || existing?.fileName || '',
-      });
+      // ファイルが新しく選択されていない場合は既存を維持
+      if (!fileData && existing) {
+        saveData.fileName = existing.fileName || '';
+        saveData.fileType = existing.fileType || '';
+        saveData.fileBase64 = existing.fileBase64 || '';
+        saveData.isImage = existing.isImage || false;
+      }
+      await updateDoc(doc(db, 'vaultItems', editId), saveData);
       showToast('更新しました ✓', 'success');
     } else {
-      await addDoc(collection(db, 'vaultItems'), {
-        category: cat, title, content, remarks,
-        fileUrl, fileName,
-        createdAt: serverTimestamp(),
-      });
+      saveData.createdAt = serverTimestamp();
+      await addDoc(collection(db, 'vaultItems'), saveData);
       showToast('登録しました ✓', 'success');
     }
 
@@ -410,44 +405,39 @@ window.startEdit = (id) => {
   if (!item) return;
   editId = id;
   const cat = normCat(item.category);
-
   const isMobile = window.innerWidth <= 768;
   const prefix = isMobile ? 'mobile' : 'pc';
 
   if (isMobile) openMobileForm();
 
-  document.getElementById(prefix + 'FormTitle') ? 
-    document.getElementById(prefix + 'FormTitle').textContent = '✏️ 編集中' :
-    document.getElementById('pcFormTitle').textContent = '✏️ 編集中';
-
+  document.getElementById(prefix === 'pc' ? 'pcFormTitle' : 'mobileFormTitle').textContent = '✏️ 編集中';
   document.getElementById(prefix + 'Title').value = item.title;
   document.getElementById(prefix + 'Content').value = item.content;
   document.getElementById(prefix + 'Remarks').value = item.remarks || '';
   document.getElementById(prefix + 'Submit').textContent = '更新する';
   document.getElementById(prefix + 'Cancel').style.display = 'block';
 
-  const grid = document.getElementById(prefix + 'CatGrid');
-  grid.querySelectorAll('.cat-btn').forEach(b => b.classList.toggle('active', b.dataset.cat === cat));
+  document.getElementById(prefix + 'CatGrid').querySelectorAll('.cat-btn').forEach(b => b.classList.toggle('active', b.dataset.cat === cat));
   selectedCat[prefix] = cat;
 
   if (item.fileName) {
-    document.getElementById(prefix + 'FileName').textContent = item.fileName;
+    document.getElementById(prefix + 'FileName').textContent = item.fileName + '（変更なし）';
     document.getElementById(prefix + 'FilePreview').style.display = 'flex';
+    if (item.isImage && item.fileBase64) {
+      document.getElementById(prefix + 'ImagePreview').innerHTML = `<img src="${item.fileBase64}" style="max-width:100%;border-radius:6px;margin-top:8px">`;
+    }
   }
 };
 
-window.deleteItem = async (id, fileUrl) => {
+window.deleteItem = async (id) => {
   if (!confirm('削除しますか？')) return;
   try {
     await deleteDoc(doc(db, 'vaultItems', id));
-    if (fileUrl) { try { await deleteObject(ref(storage, fileUrl)); } catch {} }
     items = items.filter(i => i.id !== id);
     renderList();
     updateCount();
     showToast('削除しました', 'success');
-  } catch(e) {
-    showToast('削除エラー: ' + e.message, 'error');
-  }
+  } catch(e) { showToast('削除エラー: ' + e.message, 'error'); }
 };
 
 window.showDetail = (id) => {
@@ -459,18 +449,16 @@ window.showDetail = (id) => {
   const rem = document.getElementById('detailRemarks');
   if (item.remarks) { rem.textContent = item.remarks; rem.style.display = 'block'; } else { rem.style.display = 'none'; }
   const fileEl = document.getElementById('detailFile');
-  if (item.fileUrl) {
-    const isImg = /\.(jpg|jpeg|png|gif|webp)$/i.test(item.fileName || '');
-    fileEl.innerHTML = isImg
-      ? `<a href="${item.fileUrl}" target="_blank">📎 ${esc(item.fileName)}</a><img src="${item.fileUrl}" alt="${esc(item.fileName)}">`
-      : `<a href="${item.fileUrl}" target="_blank">📄 ${esc(item.fileName)} を開く</a>`;
+  if (item.fileBase64 && item.isImage) {
+    fileEl.innerHTML = `<p style="font-size:12px;color:var(--text2);margin-bottom:6px">📎 ${esc(item.fileName)}</p><img src="${item.fileBase64}" alt="${esc(item.fileName)}">`;
+  } else if (item.fileBase64 && !item.isImage) {
+    fileEl.innerHTML = `<a href="${item.fileBase64}" download="${esc(item.fileName)}">📄 ${esc(item.fileName)} をダウンロード</a>`;
   } else { fileEl.innerHTML = ''; }
   document.getElementById('detailOverlay').classList.add('show');
 };
 
 window.closeDetail = (e) => { if (e.target === document.getElementById('detailOverlay')) document.getElementById('detailOverlay').classList.remove('show'); };
 window.closeDetailDirect = () => document.getElementById('detailOverlay').classList.remove('show');
-
 window.openMobileForm = () => document.getElementById('mobileFormOverlay').classList.add('show');
 window.closeMobileForm = (e) => { if (e.target === document.getElementById('mobileFormOverlay')) document.getElementById('mobileFormOverlay').classList.remove('show'); };
 window.closeMobileFormDirect = () => document.getElementById('mobileFormOverlay').classList.remove('show');
@@ -478,21 +466,18 @@ window.closeMobileFormDirect = () => document.getElementById('mobileFormOverlay'
 window.resetForm = () => {
   editId = null;
   ['pc', 'mobile'].forEach(p => {
-    selectedFile[p] = null;
-    const titleEl = document.getElementById(p + 'FormTitle');
-    if (titleEl) titleEl.textContent = '＋ 新規登録';
-    const mobileTitle = document.getElementById('mobileFormTitle');
-    if (mobileTitle) mobileTitle.textContent = '＋ 新規登録';
+    selectedFileData[p] = null;
+    document.getElementById(p === 'pc' ? 'pcFormTitle' : 'mobileFormTitle').textContent = '＋ 新規登録';
     document.getElementById(p + 'Title').value = '';
     document.getElementById(p + 'Content').value = '';
     document.getElementById(p + 'Remarks').value = '';
     document.getElementById(p + 'File').value = '';
     document.getElementById(p + 'FilePreview').style.display = 'none';
+    document.getElementById(p + 'ImagePreview').innerHTML = '';
     document.getElementById(p + 'Submit').textContent = '登録する';
     document.getElementById(p + 'Submit').disabled = false;
     document.getElementById(p + 'Cancel').style.display = 'none';
-    const grid = document.getElementById(p + 'CatGrid');
-    grid.querySelectorAll('.cat-btn').forEach((b, i) => b.classList.toggle('active', i === 0));
+    document.getElementById(p + 'CatGrid').querySelectorAll('.cat-btn').forEach((b, i) => b.classList.toggle('active', i === 0));
     selectedCat[p] = '銀行口座';
   });
 };
