@@ -29,6 +29,7 @@ projectId: "vault-app-3bdf8",
 storageBucket: "vault-app-3bdf8.firebasestorage.app",
 messagingSenderId: "382817010411",
 appId: "1:382817010411:web:c61a250791b1d6e1a2f4ae",
+   })
       : getApps()[0];
 
   _firebase = { db: getFirestore(app), storage: getStorage(app) };
