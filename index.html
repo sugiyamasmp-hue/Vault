@@ -611,8 +611,7 @@ async function loadItems() {
 function renderList() {
   const list = document.getElementById('cardList');
   let filtered = items.filter(item => {
-    cconst normCat = (c) => c === 'クレジットカード' ? 'カード' : c;
-const matchCat = filterCat === 'all' || normCat(item.category) === filterCat;
+  const matchCat = filterCat === 'all' || item.category === filterCat || (filterCat === 'カード' && item.category === 'クレジットカード');
     const matchSearch = !searchQ || 
       item.title?.toLowerCase().includes(searchQ) || 
       item.content?.toLowerCase().includes(searchQ);
