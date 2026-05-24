@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vault — 重要情報管理</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0f0f;
+    --surface: #1a1a1a;
+    --surface2: #222;
+    --border: #2a2a2a;
+    --accent: #c8a96e;
+    --accent2: #e8c98e;
+    --text: #e8e8e8;
+    --text2: #999;
+    --danger: #e05555;
+    --success: #5cb85c;
+    --cat-bank: #4a9eff;
+    --cat-pass: #a78bfa;
+    --cat-doc: #34d399;
+    --cat-card: #fb923c;
+    --cat-other: #94a3b8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ヘッダー */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .logo-icon {
+    width: 40px; height: 40px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+  }
+  .logo-text h1 {
+    font-family: 'Space Mono', monospace;
+    font-size: 18px;
+    color: var(--accent);
+    letter-spacing: 2px;
+  }
+  .logo-text p { font-size: 11px; color: var(--text2); }
+  .header-right {
+    display: flex; align-items: center; gap: 12px;
+  }
+  .item-count {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    background: rgba(200,169,110,0.1);
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(200,169,110,0.2);
+  }
+
+  /* メインレイアウト */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px;
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 24px;
+  }
+  @media (max-width: 900px) {
+    .container { grid-template-columns: 1fr; }
+    .form-panel { order: -1; }
+  }
+
+  /* 検索・フィルター */
+  .search-bar {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .search-bar input {
+    background: none; border: none; outline: none;
+    color: var(--text); font-size: 14px; width: 100%;
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  .search-bar input::placeholder { color: var(--text2); }
+
+  .cat-tabs {
+    display: flex; gap: 8px; margin-bottom: 20px;
+    overflow-x: auto; padding-bottom: 4px;
+  }
+  .cat-tab {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text2);
+    font-size: 12px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  .cat-tab.active, .cat-tab:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(200,169,110,0.1);
+  }
+
+  /* カードリスト */
+  .card-list { display: flex; flex-direction: column; gap: 12px; }
+
+  .vault-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .vault-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(200,169,110,0.1);
+  }
+  .vault-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    border-radius: 3px 0 0 3px;
+  }
+  .vault-card[data-cat="銀行口座"]::before { background: var(--cat-bank); }
+  .vault-card[data-cat="パスワード"]::before { background: var(--cat-pass); }
+  .vault-card[data-cat="書類"]::before { background: var(--cat-doc); }
+  .vault-card[data-cat="クレジットカード"]::before { background: var(--cat-card); }
+  .vault-card[data-cat="その他"]::before { background: var(--cat-other); }
+
+  .card-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .card-title {
+    font-size: 15px; font-weight: 700; color: var(--text);
+  }
+  .card-actions { display: flex; gap: 8px; }
+  .btn-icon {
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    transition: all 0.2s;
+  }
+  .btn-edit { background: rgba(200,169,110,0.1); color: var(--accent); }
+  .btn-edit:hover { background: rgba(200,169,110,0.2); }
+  .btn-del { background: rgba(224,85,85,0.1); color: var(--danger); }
+  .btn-del:hover { background: rgba(224,85,85,0.2); }
+
+  .card-cat {
+    font-size: 11px; color: var(--text2);
+    margin-bottom: 6px;
+  }
+  .card-content {
+    font-size: 13px; color: var(--text2);
+    white-space: pre-wrap;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .card-file {
+    margin-top: 10px;
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; color: var(--accent);
+  }
+
+  /* 空状態 */
+  .empty-state {
+    text-align: center; padding: 60px 20px;
+    color: var(--text2);
+  }
+  .empty-state .icon { font-size: 48px; margin-bottom: 16px; }
+  .empty-state p { font-size: 14px; }
+
+  /* ローディング */
+  .loading {
+    text-align: center; padding: 40px;
+    color: var(--text2); font-size: 14px;
+  }
+
+  /* フォームパネル */
+  .form-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    position: sticky;
+    top: 88px;
+    max-height: calc(100vh - 108px);
+    overflow-y: auto;
+  }
+  .form-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    color: var(--accent);
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cat-grid {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    gap: 6px; margin-bottom: 16px;
+  }
+  .cat-btn {
+    padding: 8px 4px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text2);
+    font-size: 10px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+    font-family: 'Noto Sans JP', sans-serif;
+    line-height: 1.4;
+  }
+  .cat-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(200,169,110,0.1); }
+  .cat-btn .cat-icon { font-size: 18px; display: block; margin-bottom: 2px; }
+
+  .form-group { margin-bottom: 14px; }
+  .form-label {
+    font-size: 12px; color: var(--text2);
+    margin-bottom: 6px; display: block;
+  }
+  .form-input, .form-textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: var(--text);
+    font-size: 13px;
+    font-family: 'Noto Sans JP', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-input:focus, .form-textarea:focus { border-color: var(--accent); }
+  .form-textarea { resize: vertical; min-height: 100px; }
+
+  /* ファイルアップロード */
+  .file-upload {
+    border: 2px dashed var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .file-upload:hover { border-color: var(--accent); background: rgba(200,169,110,0.05); }
+  .file-upload input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .file-upload .upload-icon { font-size: 28px; margin-bottom: 8px; }
+  .file-upload p { font-size: 12px; color: var(--text2); }
+  .file-preview {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: var(--surface2);
+    border-radius: 8px;
+    font-size: 12px;
+    color: var(--accent);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .file-preview button {
+    margin-left: auto;
+    background: none; border: none;
+    color: var(--danger); cursor: pointer; font-size: 16px;
+  }
+
+  .btn-submit {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none;
+    border-radius: 10px;
+    color: #1a1a1a;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    font-family: 'Noto Sans JP', sans-serif;
+    transition: all 0.2s;
+    margin-top: 4px;
+  }
+  .btn-submit:hover { opacity: 0.9; transform: translateY(-1px); }
+  .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  .btn-cancel {
+    width: 100%;
+    padding: 10px;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text2);
+    font-size: 13px;
+    cursor: pointer;
+    font-family: 'Noto Sans JP', sans-serif;
+    margin-top: 8px;
+    transition: all 0.2s;
+  }
+  .btn-cancel:hover { border-color: var(--text2); color: var(--text); }
+
+  /* トースト */
+  .toast {
+    position: fixed;
+    bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 20px;
+    font-size: 13px;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; }
+  .toast.success { border-color: var(--success); color: var(--success); }
+  .toast.error { border-color: var(--danger); color: var(--danger); }
+
+  /* 詳細モーダル */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 200;
+    display: none; align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    max-width: 560px; width: 100%;
+    max-height: 80vh; overflow-y: auto;
+  }
+  .modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .modal-title { font-size: 18px; font-weight: 700; }
+  .modal-close {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: none; color: var(--text2);
+    cursor: pointer; font-size: 18px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .modal-cat {
+    font-size: 12px; color: var(--text2); margin-bottom: 12px;
+  }
+  .modal-content {
+    font-size: 14px; color: var(--text);
+    white-space: pre-wrap;
+    line-height: 1.8;
+    background: var(--surface2);
+    padding: 14px; border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .modal-remarks {
+    font-size: 13px; color: var(--text2);
+    background: var(--surface2);
+    padding: 12px; border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .modal-file a {
+    color: var(--accent);
+    font-size: 13px;
+    text-decoration: none;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .modal-file img {
+    max-width: 100%; border-radius: 8px; margin-top: 10px;
+  }
+
+  /* スクロールバー */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">🔐</div>
+    <div class="logo-text">
+      <h1>VAULT</h1>
+      <p>重要情報マネージャー</p>
+    </div>
+  </div>
+  <div class="header-right">
+    <span class="item-count" id="itemCount">0 件</span>
+  </div>
+</header>
+
+<div class="container">
+  <!-- 左：リスト -->
+  <div class="list-panel">
+    <div class="search-bar">
+      <span>🔍</span>
+      <input type="text" id="searchInput" placeholder="名称・内容を検索...">
+    </div>
+    <div class="cat-tabs" id="catTabs">
+      <button class="cat-tab active" data-cat="all">すべて</button>
+      <button class="cat-tab" data-cat="銀行口座">🏦 銀行口座</button>
+      <button class="cat-tab" data-cat="パスワード">🔑 パスワード</button>
+      <button class="cat-tab" data-cat="書類">📄 書類</button>
+      <button class="cat-tab" data-cat="クレジットカード">💳 カード</button>
+      <button class="cat-tab" data-cat="その他">📁 その他</button>
+    </div>
+    <div class="card-list" id="cardList">
+      <div class="loading">読み込み中...</div>
+    </div>
+  </div>
+
+  <!-- 右：フォーム -->
+  <div class="form-panel">
+    <div class="form-title" id="formTitle">＋ 新規登録</div>
+
+    <div class="cat-grid">
+      <button class="cat-btn active" data-cat="銀行口座">
+        <span class="cat-icon">🏦</span>銀行口座
+      </button>
+      <button class="cat-btn" data-cat="パスワード">
+        <span class="cat-icon">🔑</span>パスワード
+      </button>
+      <button class="cat-btn" data-cat="書類">
+        <span class="cat-icon">📄</span>書類
+      </button>
+      <button class="cat-btn" data-cat="クレジットカード">
+        <span class="cat-icon">💳</span>カード
+      </button>
+      <button class="cat-btn" data-cat="その他">
+        <span class="cat-icon">📁</span>その他
+      </button>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">名称 *</label>
+      <input type="text" class="form-input" id="titleInput" placeholder="例：PayPay銀行、Googleアカウント">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">内容 *</label>
+      <textarea class="form-textarea" id="contentInput" placeholder="口座番号、パスワードなど"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">備考</label>
+      <textarea class="form-textarea" id="remarksInput" style="min-height:60px" placeholder="メモや補足情報"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">ファイル添付（画像・PDF）</label>
+      <div class="file-upload" id="fileUploadArea">
+        <input type="file" id="fileInput" accept="image/*,.pdf">
+        <div class="upload-icon">📎</div>
+        <p>クリックしてファイルを選択</p>
+        <p style="margin-top:4px;font-size:11px;">画像（JPG・PNG・GIF）・PDF対応</p>
+      </div>
+      <div class="file-preview" id="filePreview" style="display:none">
+        <span id="fileName"></span>
+        <button onclick="clearFile()">✕</button>
+      </div>
+    </div>
+
+    <button class="btn-submit" id="submitBtn" onclick="handleSubmit()">登録する</button>
+    <button class="btn-cancel" id="cancelBtn" style="display:none" onclick="resetForm()">キャンセル</button>
+  </div>
+</div>
+
+<!-- 詳細モーダル -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle"></div>
+      <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    </div>
+    <div class="modal-cat" id="modalCat"></div>
+    <div class="modal-content" id="modalContent"></div>
+    <div class="modal-remarks" id="modalRemarks" style="display:none"></div>
+    <div class="modal-file" id="modalFile"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+
+// ── Firebase設定（直書き） ──
+const firebaseConfig = {
+  apiKey: "AIzaSyBplaq4hCnjbSm6erkJFSJDRkxC2r8ESGU",
+  authDomain: "vault-app-3bdf8.firebaseapp.com",
+  projectId: "vault-app-3bdf8",
+  storageBucket: "vault-app-3bdf8.firebasestorage.app",
+  messagingSenderId: "382817010411",
+  appId: "1:382817010411:web:c61a250791b1d6e1a2f4ae"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const storage = getStorage(app);
+
+// ── 状態 ──
+let items = [];
+let selectedCat = "銀行口座";
+let filterCat = "all";
+let searchQ = "";
+let editId = null;
+let selectedFile = null;
+
+// ── カテゴリ選択 ──
+document.querySelectorAll('.cat-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedCat = btn.dataset.cat;
+  });
+});
+
+// ── フィルタータブ ──
+document.querySelectorAll('.cat-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    filterCat = tab.dataset.cat;
+    renderList();
+  });
+});
+
+// ── 検索 ──
+document.getElementById('searchInput').addEventListener('input', e => {
+  searchQ = e.target.value.toLowerCase();
+  renderList();
+});
+
+// ── ファイル選択 ──
+document.getElementById('fileInput').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (file) {
+    selectedFile = file;
+    document.getElementById('fileName').textContent = file.name;
+    document.getElementById('filePreview').style.display = 'flex';
+  }
+});
+
+window.clearFile = () => {
+  selectedFile = null;
+  document.getElementById('fileInput').value = '';
+  document.getElementById('filePreview').style.display = 'none';
+};
+
+// ── データ取得 ──
+async function loadItems() {
+  try {
+    const q = query(collection(db, "vaultItems"), orderBy("createdAt", "desc"));
+    const snap = await getDocs(q);
+    items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderList();
+    updateCount();
+  } catch(e) {
+    showToast('データ取得エラー: ' + e.message, 'error');
+    document.getElementById('cardList').innerHTML = '<div class="empty-state"><div class="icon">⚠️</div><p>データを取得できませんでした</p></div>';
+  }
+}
+
+// ── レンダリング ──
+function renderList() {
+  const list = document.getElementById('cardList');
+  let filtered = items.filter(item => {
+    const matchCat = filterCat === 'all' || item.category === filterCat;
+    const matchSearch = !searchQ || 
+      item.title?.toLowerCase().includes(searchQ) || 
+      item.content?.toLowerCase().includes(searchQ);
+    return matchCat && matchSearch;
+  });
+
+  if (filtered.length === 0) {
+    list.innerHTML = `<div class="empty-state"><div class="icon">🔐</div><p>まだ登録がありません</p></div>`;
+    return;
+  }
+
+  list.innerHTML = filtered.map(item => `
+    <div class="vault-card" data-cat="${item.category}" onclick="showDetail('${item.id}')">
+      <div class="card-header">
+        <div class="card-title">${escHtml(item.title)}</div>
+        <div class="card-actions" onclick="event.stopPropagation()">
+          <button class="btn-icon btn-edit" onclick="startEdit('${item.id}')">✏️</button>
+          <button class="btn-icon btn-del" onclick="deleteItem('${item.id}', '${item.fileUrl || ''}')">🗑️</button>
+        </div>
+      </div>
+      <div class="card-cat">${item.category}</div>
+      <div class="card-content">${escHtml(item.content)}</div>
+      ${item.fileName ? `<div class="card-file">📎 ${escHtml(item.fileName)}</div>` : ''}
+    </div>
+  `).join('');
+}
+
+function updateCount() {
+  document.getElementById('itemCount').textContent = items.length + ' 件';
+}
+
+// ── 登録・更新 ──
+window.handleSubmit = async () => {
+  const title = document.getElementById('titleInput').value.trim();
+  const content = document.getElementById('contentInput').value.trim();
+  const remarks = document.getElementById('remarksInput').value.trim();
+
+  if (!title) { showToast('名称を入力してください', 'error'); return; }
+  if (!content) { showToast('内容を入力してください', 'error'); return; }
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = '保存中...';
+
+  try {
+    let fileUrl = '';
+    let fileName = '';
+
+    // ファイルアップロード
+    if (selectedFile) {
+      const storageRef = ref(storage, `vault_files/${Date.now()}_${selectedFile.name}`);
+      await uploadBytes(storageRef, selectedFile);
+      fileUrl = await getDownloadURL(storageRef);
+      fileName = selectedFile.name;
+    }
+
+    if (editId) {
+      // 更新
+      const existing = items.find(i => i.id === editId);
+      await updateDoc(doc(db, "vaultItems", editId), {
+        category: selectedCat,
+        title, content, remarks,
+        fileUrl: fileUrl || existing?.fileUrl || '',
+        fileName: fileName || existing?.fileName || '',
+      });
+      showToast('更新しました ✓', 'success');
+    } else {
+      // 新規追加
+      await addDoc(collection(db, "vaultItems"), {
+        category: selectedCat,
+        title, content, remarks,
+        fileUrl, fileName,
+        createdAt: serverTimestamp(),
+      });
+      showToast('登録しました ✓', 'success');
+    }
+
+    resetForm();
+    await loadItems();
+  } catch(e) {
+    showToast('エラー: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = editId ? '更新する' : '登録する';
+  }
+};
+
+// ── 編集開始 ──
+window.startEdit = (id) => {
+  const item = items.find(i => i.id === id);
+  if (!item) return;
+  editId = id;
+
+  document.getElementById('formTitle').textContent = '✏️ 編集中';
+  document.getElementById('titleInput').value = item.title;
+  document.getElementById('contentInput').value = item.content;
+  document.getElementById('remarksInput').value = item.remarks || '';
+  document.getElementById('submitBtn').textContent = '更新する';
+  document.getElementById('cancelBtn').style.display = 'block';
+
+  document.querySelectorAll('.cat-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.cat === item.category);
+  });
+  selectedCat = item.category;
+
+  if (item.fileName) {
+    document.getElementById('fileName').textContent = item.fileName + '（変更なし）';
+    document.getElementById('filePreview').style.display = 'flex';
+  }
+
+  document.querySelector('.form-panel').scrollIntoView({ behavior: 'smooth' });
+};
+
+// ── 削除 ──
+window.deleteItem = async (id, fileUrl) => {
+  if (!confirm('削除しますか？')) return;
+  try {
+    await deleteDoc(doc(db, "vaultItems", id));
+    if (fileUrl) {
+      try { await deleteObject(ref(storage, fileUrl)); } catch {}
+    }
+    items = items.filter(i => i.id !== id);
+    renderList();
+    updateCount();
+    showToast('削除しました', 'success');
+  } catch(e) {
+    showToast('削除エラー: ' + e.message, 'error');
+  }
+};
+
+// ── 詳細表示 ──
+window.showDetail = (id) => {
+  const item = items.find(i => i.id === id);
+  if (!item) return;
+
+  document.getElementById('modalTitle').textContent = item.title;
+  document.getElementById('modalCat').textContent = item.category;
+  document.getElementById('modalContent').textContent = item.content;
+
+  const remarksEl = document.getElementById('modalRemarks');
+  if (item.remarks) {
+    remarksEl.textContent = item.remarks;
+    remarksEl.style.display = 'block';
+  } else {
+    remarksEl.style.display = 'none';
+  }
+
+  const fileEl = document.getElementById('modalFile');
+  if (item.fileUrl) {
+    const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(item.fileName || '');
+    fileEl.innerHTML = isImage
+      ? `<a href="${item.fileUrl}" target="_blank">📎 ${escHtml(item.fileName)}</a><img src="${item.fileUrl}" alt="${escHtml(item.fileName)}">`
+      : `<a href="${item.fileUrl}" target="_blank">📄 ${escHtml(item.fileName)} を開く</a>`;
+  } else {
+    fileEl.innerHTML = '';
+  }
+
+  document.getElementById('modalOverlay').classList.add('show');
+};
+
+window.closeModal = (e) => {
+  if (e.target === document.getElementById('modalOverlay')) {
+    document.getElementById('modalOverlay').classList.remove('show');
+  }
+};
+window.closeModalDirect = () => {
+  document.getElementById('modalOverlay').classList.remove('show');
+};
+
+// ── フォームリセット ──
+window.resetForm = () => {
+  editId = null;
+  selectedFile = null;
+  document.getElementById('formTitle').textContent = '＋ 新規登録';
+  document.getElementById('titleInput').value = '';
+  document.getElementById('contentInput').value = '';
+  document.getElementById('remarksInput').value = '';
+  document.getElementById('fileInput').value = '';
+  document.getElementById('filePreview').style.display = 'none';
+  document.getElementById('submitBtn').textContent = '登録する';
+  document.getElementById('submitBtn').disabled = false;
+  document.getElementById('cancelBtn').style.display = 'none';
+  document.querySelectorAll('.cat-btn').forEach((b, i) => b.classList.toggle('active', i === 0));
+  selectedCat = '銀行口座';
+};
+
+// ── ユーティリティ ──
+function escHtml(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function showToast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ── 起動 ──
+loadItems();
+</script>
+</body>
+</html>
