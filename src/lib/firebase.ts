@@ -36,8 +36,14 @@ async function firebaseFetch(): Promise<VaultItem[]> {
   const { db } = await getFirebase();
   const { collection, query, orderBy, getDocs } = await import("firebase/firestore");
   const snapshot = await getDocs(query(collection(db, "vaultItems"), orderBy("createdAt", "desc")));
-  return snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as VaultItem));
-}
+  return snapshot.docs.map((d) => {
+  const data = d.data();
+  return {
+    id: d.id,
+    ...data,
+    createdAt: data.createdAt?.toDate?.() ?? new Date(),
+  } as VaultItem;
+});
 
 async function firebaseAdd(input: VaultItemInput): Promise<VaultItem> {
   const { db, storage } = await getFirebase();
