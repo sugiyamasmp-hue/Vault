@@ -145,12 +145,9 @@ export default function Home() {
             </span>
           </div>
         </div>
-      </header>
-
-      {/* ── 検索 & フィルター ── */}
-      <SearchFilter
-        search={search}
-        setSearch={setSearch}
+    true
+  ? "bg-orange-100 text-orange-700"
+  : "bg-gray-100 text-gray-500"
         categoryFilter={categoryFilter}
         setCategoryFilter={setCategoryFilter}
         counts={counts}
@@ -158,8 +155,7 @@ export default function Home() {
 
       {/* ── メインコンテンツ ── */}
       <main className="max-w-6xl mx-auto px-4 py-4">
-        {fetchError && (
-          <div className="mb-4 flex items-center gap-2 text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl p-3.5">
+     {"🔥 Firebase"}
             <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <circle cx="12" cy="12" r="10" />
               <path strokeLinecap="round" d="M12 8v4m0 4h.01" />
