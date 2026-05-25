@@ -45,6 +45,7 @@
   .card-cat { font-size: 11px; color: var(--text2); margin-bottom: 4px; }
   .card-content { font-size: 12px; color: var(--text2); white-space: pre-wrap; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   .card-file { margin-top: 8px; font-size: 11px; color: var(--accent); }
+  .card-thumb { margin-top: 8px; width: 60px; height: 60px; object-fit: cover; border-radius: 6px; }
 
   .empty-state { text-align: center; padding: 40px 20px; color: var(--text2); }
   .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
@@ -66,27 +67,28 @@
 
   .file-upload { border: 2px dashed var(--border); border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.2s; position: relative; }
   .file-upload:hover { border-color: var(--accent); }
-  .file-upload input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .file-upload input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
   .file-upload .upload-icon { font-size: 24px; margin-bottom: 6px; }
   .file-upload p { font-size: 11px; color: var(--text2); }
-  .file-note { font-size: 10px; color: var(--text2); margin-top: 4px; }
-  .file-preview { margin-top: 8px; padding: 7px 10px; background: var(--surface2); border-radius: 6px; font-size: 11px; color: var(--accent); display: flex; align-items: center; gap: 6px; }
+  .file-preview { margin-top: 8px; padding: 7px 10px; background: var(--surface2); border-radius: 6px; font-size: 11px; color: var(--accent); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
   .file-preview button { margin-left: auto; background: none; border: none; color: var(--danger); cursor: pointer; font-size: 14px; }
-  .file-preview img { max-width: 100%; border-radius: 6px; margin-top: 6px; }
+  .img-preview { max-width: 100%; border-radius: 6px; margin-top: 8px; display: block; }
 
   .btn-submit { width: 100%; padding: 11px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border: none; border-radius: 8px; color: #1a1a1a; font-weight: 700; font-size: 14px; cursor: pointer; font-family: 'Noto Sans JP', sans-serif; transition: all 0.2s; margin-top: 4px; }
   .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
   .btn-cancel { width: 100%; padding: 9px; background: none; border: 1px solid var(--border); border-radius: 8px; color: var(--text2); font-size: 12px; cursor: pointer; font-family: 'Noto Sans JP', sans-serif; margin-top: 6px; }
 
   .fab { display: none; }
-  @media (max-width: 768px) { .fab { display: flex; position: fixed; bottom: 24px; right: 20px; width: 56px; height: 56px; border-radius: 16px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border: none; color: #1a1a1a; font-size: 28px; font-weight: 700; cursor: pointer; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(200,169,110,0.4); z-index: 50; } }
+  @media (max-width: 768px) {
+    .fab { display: flex; position: fixed; bottom: 24px; right: 20px; width: 56px; height: 56px; border-radius: 16px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border: none; color: #1a1a1a; font-size: 28px; font-weight: 700; cursor: pointer; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(200,169,110,0.4); z-index: 50; }
+  }
 
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; display: none; align-items: flex-end; justify-content: center; }
   .modal-overlay.show { display: flex; }
   .modal { background: var(--surface); border-radius: 20px 20px 0 0; padding: 20px 16px 32px; width: 100%; max-height: 92vh; overflow-y: auto; }
   .modal-handle { width: 40px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 16px; }
   .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-  .modal-title { font-size: 16px; font-weight: 700; color: var(--accent); font-family: 'Space Mono', monospace; }
+  .modal-title-text { font-size: 16px; font-weight: 700; color: var(--accent); font-family: 'Space Mono', monospace; }
   .modal-close { width: 30px; height: 30px; border-radius: 6px; border: 1px solid var(--border); background: none; color: var(--text2); cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; }
 
   .detail-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 300; display: none; align-items: center; justify-content: center; padding: 20px; }
@@ -123,7 +125,7 @@
 <div class="container">
   <div>
     <div class="search-bar"><span>🔍</span><input type="text" id="searchInput" placeholder="名称・内容を検索..."></div>
-    <div class="cat-tabs" id="catTabs">
+    <div class="cat-tabs">
       <button class="cat-tab active" data-cat="all">すべて</button>
       <button class="cat-tab" data-cat="銀行口座">🏦 銀行</button>
       <button class="cat-tab" data-cat="パスワード">🔑 パスワード</button>
@@ -134,7 +136,7 @@
     <div class="card-list" id="cardList"><div class="loading">読み込み中...</div></div>
   </div>
 
-  <div class="form-panel" id="pcForm">
+  <div class="form-panel">
     <div class="form-title" id="pcFormTitle">＋ 新規登録</div>
     <div class="cat-grid" id="pcCatGrid">
       <button class="cat-btn active" data-cat="銀行口座"><span class="cat-icon">🏦</span>銀行口座</button>
@@ -148,13 +150,17 @@
     <div class="form-group"><label class="form-label">備考</label><textarea class="form-textarea" id="pcRemarks" style="min-height:60px" placeholder="メモや補足情報"></textarea></div>
     <div class="form-group">
       <label class="form-label">ファイル添付（画像・PDF）</label>
-      <div class="file-upload"><input type="file" id="pcFile" accept="image/*,.pdf"><div class="upload-icon">📎</div><p>クリックしてファイルを選択</p></div>
-      <p class="file-note">※ 画像は1MB以下推奨、PDFはリンク保存</p>
+      <div class="file-upload" id="pcDropZone">
+        <input type="file" id="pcFile" accept="image/*,.pdf">
+        <div class="upload-icon">📎</div>
+        <p>クリックしてファイルを選択</p>
+        <p style="font-size:10px;margin-top:3px;color:var(--text2)">画像・PDF対応（10MB以下）</p>
+      </div>
       <div class="file-preview" id="pcFilePreview" style="display:none">
         <span id="pcFileName"></span>
         <button onclick="clearFile('pc')">✕</button>
       </div>
-      <div id="pcImagePreview"></div>
+      <img id="pcImgPreview" class="img-preview" style="display:none">
     </div>
     <button class="btn-submit" id="pcSubmit" onclick="handleSubmit('pc')">登録する</button>
     <button class="btn-cancel" id="pcCancel" style="display:none" onclick="resetForm()">キャンセル</button>
@@ -163,11 +169,11 @@
 
 <button class="fab" onclick="openMobileForm()">＋</button>
 
-<div class="modal-overlay" id="mobileFormOverlay" onclick="closeMobileForm(event)">
+<div class="modal-overlay" id="mobileFormOverlay">
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-header">
-      <div class="modal-title" id="mobileFormTitle">＋ 新規登録</div>
+      <div class="modal-title-text" id="mobileFormTitle">＋ 新規登録</div>
       <button class="modal-close" onclick="closeMobileFormDirect()">✕</button>
     </div>
     <div class="cat-grid" id="mobileCatGrid">
@@ -182,13 +188,17 @@
     <div class="form-group"><label class="form-label">備考</label><textarea class="form-textarea" id="mobileRemarks" style="min-height:60px" placeholder="メモや補足情報"></textarea></div>
     <div class="form-group">
       <label class="form-label">ファイル添付（画像・PDF）</label>
-      <div class="file-upload"><input type="file" id="mobileFile" accept="image/*,.pdf"><div class="upload-icon">📎</div><p>タップしてファイルを選択</p></div>
-      <p class="file-note">※ 画像は1MB以下推奨、PDFはリンク保存</p>
+      <div class="file-upload">
+        <input type="file" id="mobileFile" accept="image/*,.pdf">
+        <div class="upload-icon">📎</div>
+        <p>タップしてファイルを選択</p>
+        <p style="font-size:10px;margin-top:3px;color:var(--text2)">画像・PDF対応（10MB以下）</p>
+      </div>
       <div class="file-preview" id="mobileFilePreview" style="display:none">
         <span id="mobileFileName"></span>
         <button onclick="clearFile('mobile')">✕</button>
       </div>
-      <div id="mobileImagePreview"></div>
+      <img id="mobileImgPreview" class="img-preview" style="display:none">
     </div>
     <button class="btn-submit" id="mobileSubmit" onclick="handleSubmit('mobile')">登録する</button>
     <button class="btn-cancel" id="mobileCancel" style="display:none" onclick="resetForm()">キャンセル</button>
@@ -214,6 +224,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+// ── Firebase設定 ──
 const firebaseConfig = {
   apiKey: "AIzaSyBplaq4hCnjbSm6erkJFSJDRkxC2r8ESGU",
   authDomain: "vault-app-3bdf8.firebaseapp.com",
@@ -223,6 +234,10 @@ const firebaseConfig = {
   appId: "1:382817010411:web:c61a250791b1d6e1a2f4ae"
 };
 
+// ── Cloudinary設定 ──
+const CLOUDINARY_CLOUD = "dyawr0npq";
+const CLOUDINARY_UPLOAD_PRESET = "vault_unsigned";
+
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
@@ -231,18 +246,24 @@ let selectedCat = { pc: '銀行口座', mobile: '銀行口座' };
 let filterCat = 'all';
 let searchQ = '';
 let editId = null;
-let selectedFileData = { pc: null, mobile: null }; // {name, type, base64, isImage}
+let selectedFile = { pc: null, mobile: null };
 
 function normCat(c) { return c === 'クレジットカード' ? 'カード' : c; }
 
-// ファイルをBase64に変換
-function fileToBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
+// Cloudinaryにアップロード
+async function uploadToCloudinary(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+
+  const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/auto/upload`, {
+    method: 'POST',
+    body: formData
   });
+
+  if (!res.ok) throw new Error('Cloudinaryアップロード失敗');
+  const data = await res.json();
+  return { url: data.secure_url, publicId: data.public_id, isImage: data.resource_type === 'image' };
 }
 
 // カテゴリボタン
@@ -268,39 +289,37 @@ document.querySelectorAll('.cat-tab').forEach(tab => {
 
 document.getElementById('searchInput').addEventListener('input', e => { searchQ = e.target.value.toLowerCase(); renderList(); });
 
-// ファイル選択
+// ファイル選択（モーダルが閉じないよう stopPropagation）
 ['pc', 'mobile'].forEach(prefix => {
-  document.getElementById(prefix + 'File').addEventListener('change', async e => {
+  const input = document.getElementById(prefix + 'File');
+  input.addEventListener('click', e => e.stopPropagation());
+  input.addEventListener('change', e => {
+    e.stopPropagation();
     const file = e.target.files[0];
     if (!file) return;
-
-    // サイズチェック（画像は1MB以下）
-    const isImage = file.type.startsWith('image/');
-    if (isImage && file.size > 1.5 * 1024 * 1024) {
-      showToast('画像は1.5MB以下にしてください', 'error');
-      e.target.value = '';
-      return;
-    }
-
-    const base64 = await fileToBase64(file);
-    selectedFileData[prefix] = { name: file.name, type: file.type, base64, isImage };
+    selectedFile[prefix] = file;
     document.getElementById(prefix + 'FileName').textContent = file.name;
     document.getElementById(prefix + 'FilePreview').style.display = 'flex';
 
     // 画像プレビュー
-    if (isImage) {
-      document.getElementById(prefix + 'ImagePreview').innerHTML = `<img src="${base64}" style="max-width:100%;border-radius:6px;margin-top:8px">`;
-    } else {
-      document.getElementById(prefix + 'ImagePreview').innerHTML = `<p style="font-size:11px;color:var(--text2);margin-top:6px">📄 PDFは登録後にダウンロードできます</p>`;
+    if (file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = ev => {
+        const img = document.getElementById(prefix + 'ImgPreview');
+        img.src = ev.target.result;
+        img.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
     }
   });
 });
 
 window.clearFile = (prefix) => {
-  selectedFileData[prefix] = null;
+  selectedFile[prefix] = null;
   document.getElementById(prefix + 'File').value = '';
   document.getElementById(prefix + 'FilePreview').style.display = 'none';
-  document.getElementById(prefix + 'ImagePreview').innerHTML = '';
+  document.getElementById(prefix + 'ImgPreview').style.display = 'none';
+  document.getElementById(prefix + 'ImgPreview').src = '';
 };
 
 // データ取得
@@ -342,7 +361,8 @@ function renderList() {
       </div>
       <div class="card-cat">${esc(normCat(item.category))}</div>
       <div class="card-content">${esc(item.content)}</div>
-      ${item.fileName ? `<div class="card-file">📎 ${esc(item.fileName)}</div>` : ''}
+      ${item.isImage && item.fileUrl ? `<img class="card-thumb" src="${item.fileUrl}" alt="${esc(item.fileName)}">` : ''}
+      ${item.fileName && !item.isImage ? `<div class="card-file">📎 ${esc(item.fileName)}</div>` : ''}
     </div>
   `).join('');
 }
@@ -354,7 +374,7 @@ window.handleSubmit = async (prefix) => {
   const content = document.getElementById(prefix + 'Content').value.trim();
   const remarks = document.getElementById(prefix + 'Remarks').value.trim();
   const cat = selectedCat[prefix];
-  const fileData = selectedFileData[prefix];
+  const file = selectedFile[prefix];
 
   if (!title) { showToast('名称を入力してください', 'error'); return; }
   if (!content) { showToast('内容を入力してください', 'error'); return; }
@@ -364,21 +384,25 @@ window.handleSubmit = async (prefix) => {
   btn.textContent = '保存中...';
 
   try {
-    const saveData = {
-      category: cat, title, content, remarks,
-      fileName: fileData?.name || '',
-      fileType: fileData?.type || '',
-      fileBase64: fileData?.base64 || '',
-      isImage: fileData?.isImage || false,
-    };
+    let fileUrl = '';
+    let fileName = '';
+    let isImage = false;
+
+    if (file) {
+      showToast('画像をアップロード中...', 'success');
+      const result = await uploadToCloudinary(file);
+      fileUrl = result.url;
+      fileName = file.name;
+      isImage = result.isImage;
+    }
+
+    const saveData = { category: cat, title, content, remarks, fileUrl, fileName, isImage };
 
     if (editId) {
       const existing = items.find(i => i.id === editId);
-      // ファイルが新しく選択されていない場合は既存を維持
-      if (!fileData && existing) {
+      if (!file && existing) {
+        saveData.fileUrl = existing.fileUrl || '';
         saveData.fileName = existing.fileName || '';
-        saveData.fileType = existing.fileType || '';
-        saveData.fileBase64 = existing.fileBase64 || '';
         saveData.isImage = existing.isImage || false;
       }
       await updateDoc(doc(db, 'vaultItems', editId), saveData);
@@ -416,15 +440,16 @@ window.startEdit = (id) => {
   document.getElementById(prefix + 'Remarks').value = item.remarks || '';
   document.getElementById(prefix + 'Submit').textContent = '更新する';
   document.getElementById(prefix + 'Cancel').style.display = 'block';
-
   document.getElementById(prefix + 'CatGrid').querySelectorAll('.cat-btn').forEach(b => b.classList.toggle('active', b.dataset.cat === cat));
   selectedCat[prefix] = cat;
 
-  if (item.fileName) {
+  if (item.fileUrl) {
     document.getElementById(prefix + 'FileName').textContent = item.fileName + '（変更なし）';
     document.getElementById(prefix + 'FilePreview').style.display = 'flex';
-    if (item.isImage && item.fileBase64) {
-      document.getElementById(prefix + 'ImagePreview').innerHTML = `<img src="${item.fileBase64}" style="max-width:100%;border-radius:6px;margin-top:8px">`;
+    if (item.isImage) {
+      const img = document.getElementById(prefix + 'ImgPreview');
+      img.src = item.fileUrl;
+      img.style.display = 'block';
     }
   }
 };
@@ -449,10 +474,10 @@ window.showDetail = (id) => {
   const rem = document.getElementById('detailRemarks');
   if (item.remarks) { rem.textContent = item.remarks; rem.style.display = 'block'; } else { rem.style.display = 'none'; }
   const fileEl = document.getElementById('detailFile');
-  if (item.fileBase64 && item.isImage) {
-    fileEl.innerHTML = `<p style="font-size:12px;color:var(--text2);margin-bottom:6px">📎 ${esc(item.fileName)}</p><img src="${item.fileBase64}" alt="${esc(item.fileName)}">`;
-  } else if (item.fileBase64 && !item.isImage) {
-    fileEl.innerHTML = `<a href="${item.fileBase64}" download="${esc(item.fileName)}">📄 ${esc(item.fileName)} をダウンロード</a>`;
+  if (item.fileUrl && item.isImage) {
+    fileEl.innerHTML = `<p style="font-size:12px;color:var(--text2);margin-bottom:6px">📎 ${esc(item.fileName)}</p><img src="${item.fileUrl}" style="max-width:100%;border-radius:8px">`;
+  } else if (item.fileUrl) {
+    fileEl.innerHTML = `<a href="${item.fileUrl}" target="_blank">📄 ${esc(item.fileName)} を開く</a>`;
   } else { fileEl.innerHTML = ''; }
   document.getElementById('detailOverlay').classList.add('show');
 };
@@ -460,20 +485,20 @@ window.showDetail = (id) => {
 window.closeDetail = (e) => { if (e.target === document.getElementById('detailOverlay')) document.getElementById('detailOverlay').classList.remove('show'); };
 window.closeDetailDirect = () => document.getElementById('detailOverlay').classList.remove('show');
 window.openMobileForm = () => document.getElementById('mobileFormOverlay').classList.add('show');
-window.closeMobileForm = (e) => { if (e.target === document.getElementById('mobileFormOverlay')) document.getElementById('mobileFormOverlay').classList.remove('show'); };
 window.closeMobileFormDirect = () => document.getElementById('mobileFormOverlay').classList.remove('show');
 
 window.resetForm = () => {
   editId = null;
   ['pc', 'mobile'].forEach(p => {
-    selectedFileData[p] = null;
+    selectedFile[p] = null;
     document.getElementById(p === 'pc' ? 'pcFormTitle' : 'mobileFormTitle').textContent = '＋ 新規登録';
     document.getElementById(p + 'Title').value = '';
     document.getElementById(p + 'Content').value = '';
     document.getElementById(p + 'Remarks').value = '';
     document.getElementById(p + 'File').value = '';
     document.getElementById(p + 'FilePreview').style.display = 'none';
-    document.getElementById(p + 'ImagePreview').innerHTML = '';
+    document.getElementById(p + 'ImgPreview').style.display = 'none';
+    document.getElementById(p + 'ImgPreview').src = '';
     document.getElementById(p + 'Submit').textContent = '登録する';
     document.getElementById(p + 'Submit').disabled = false;
     document.getElementById(p + 'Cancel').style.display = 'none';
